@@ -71,7 +71,7 @@ class _JoinState extends State<Join> {
         {
           "id": i,
           "user_id": widget.userID,
-          "image":'spa${ i+ 1}.jpg',
+          "image":'spa${i+1}.jpg',
           "isTapped": false
         }
       );
@@ -81,7 +81,7 @@ class _JoinState extends State<Join> {
         {
           "id": i,
           "user_id": widget.userID,
-          "image":'spa${ i+ 1 - 5}.jpg',
+          "image":'spa${i+1-5}.jpg',
           "isTapped": false
         }
       );
@@ -90,8 +90,8 @@ class _JoinState extends State<Join> {
       cardlist.add(
         {
           "id": i,
-          "user_id": enemyUserID==null?enemyUserID:0,
-          "image":'spa${ i+ 1-10}.jpg',
+          "user_id": enemyUserID==null?0:enemyUserID,
+          "image":'spa${i+1-10}.jpg',
           "isTapped": false
         }
       );
@@ -100,8 +100,8 @@ class _JoinState extends State<Join> {
       cardlist.add(
         {
           "id": i,
-          "user_id": enemyUserID==null?enemyUserID:0,
-          "image":'spa${ i+ 1 - 15}.jpg',
+          "user_id": enemyUserID==null?0:enemyUserID,
+          "image":'spa${i+1-15}.jpg',
           "isTapped": false
         }
       );
@@ -186,6 +186,7 @@ class _JoinState extends State<Join> {
         if(alldata.length==0){
           setState(() {
             alldata = cList();
+            print(alldata);
           });
         }
         if (d["data"]["message"]=="Update!" && d["data"]["obj"]["user_id"] == widget.userID) {
@@ -207,13 +208,14 @@ class _JoinState extends State<Join> {
           }
           setState(() {
             ans = v;
+            print(ans);
           });
         }
       }
+      print("MyPOINT: $myPoint");
+      print("EnemyyPOINT: $enemyPoint");
     }
-    print("MyPOINT: $myPoint");
-    print("EnemyyPOINT: $enemyPoint");
-    if(enemyPoint >3){
+    if(enemyPoint >2){
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) {
@@ -222,7 +224,7 @@ class _JoinState extends State<Join> {
         ),
       );
     }
-    if(myPoint>3){
+    if(myPoint>2){
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) {
@@ -480,17 +482,18 @@ class _JoinState extends State<Join> {
             post(false);
           }
           postAns();
+          print(ans);
           setState(() {
-            b=null;
-            for(var j=0; j<alldata.length;j++){
-              for(var k=0; k<ans.length;k++){
-                if(j==ans[k]){
-                  alldata[j]["isTapped"]=true;
+            for(var jj=0; jj < alldata.length; jj++){
+              for(var kk=0; kk < ans.length; kk++){
+                if(alldata[jj]["id"]==ans[kk]){
+                  alldata[jj]["isTapped"]=true;
                 }else{
-                  // alldata[j]["isTapped"]=false;
+                  alldata[jj]["isTapped"]=false;
                 }
               }
             }
+            b=null;
           });
           return;
         }
