@@ -212,7 +212,7 @@ class _JoinState extends State<Join> {
       print("MyPOINT: $myPoint");
       print("EnemyyPOINT: $enemyPoint");
     }
-    if(enemyPoint>2){
+    if(enemyPoint>1){
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
@@ -221,7 +221,7 @@ class _JoinState extends State<Join> {
         ),
       );
     }
-    if(myPoint>2){
+    if(myPoint>1){
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
