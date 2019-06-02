@@ -45,7 +45,7 @@ class _JoinState extends State<Join> {
   int enemyUserID;
 
   int count=0;
-  var b=null;
+  var b;
 
   List<int> ans=[];
 
@@ -72,7 +72,8 @@ class _JoinState extends State<Join> {
           "id": i,
           "user_id": widget.userID,
           "image":'spa${i+1}.jpg',
-          "isTapped": false
+          "isTapped": false,
+          "cleared": false
         }
       );
     }
@@ -82,7 +83,8 @@ class _JoinState extends State<Join> {
           "id": i,
           "user_id": widget.userID,
           "image":'spa${i+1-5}.jpg',
-          "isTapped": false
+          "isTapped": false,
+          "cleared": false
         }
       );
     }
@@ -92,7 +94,8 @@ class _JoinState extends State<Join> {
           "id": i,
           "user_id": enemyUserID==null?0:enemyUserID,
           "image":'spa${i+1-10}.jpg',
-          "isTapped": false
+          "isTapped": false,
+          "cleared": false
         }
       );
     }
@@ -102,7 +105,8 @@ class _JoinState extends State<Join> {
           "id": i,
           "user_id": enemyUserID==null?0:enemyUserID,
           "image":'spa${i+1-15}.jpg',
-          "isTapped": false
+          "isTapped": false,
+          "cleared": false
         }
       );
     }
@@ -114,12 +118,6 @@ class _JoinState extends State<Join> {
     if(_timer != null){
       _timer.cancel();
     }
-    channel.sink.add(
-      jsonEncode({
-        "command": "unsubscribe",
-        "identifier": identifier
-      })
-    );
     super.dispose();
   }
 
@@ -175,18 +173,20 @@ class _JoinState extends State<Join> {
         });
         startTimer();
       } else {
+        print(d);
         // ゲーム開始後
-        if (d["data"]["message"]=="Saved!" && d["data"]["obj"]["user_id"] == widget.userID){
+        if ((d["data"]["message"]=="Saved!") && (d["data"]["obj"]["user_id"] == widget.userID)){
           setState(() {
             messageId = d["data"]["obj"]["id"];
           });
-        }else if(d["data"]["message"]=="Saved!" && d["data"]["obj"]["user_id"] != widget.userID){
-          enemyUserID = d["data"]["obj"]["user_id"];
+        }else if((d["data"]["message"]=="Saved!") && (d["data"]["obj"]["user_id"] != widget.userID)){
+          setState(() {
+            enemyUserID = d["data"]["obj"]["user_id"];
+          });
         }
         if(alldata.length==0){
           setState(() {
             alldata = cList();
-            print(alldata);
           });
         }
         if (d["data"]["message"]=="Update!" && d["data"]["obj"]["user_id"] == widget.userID) {
@@ -201,22 +201,19 @@ class _JoinState extends State<Join> {
           });
         }
         if(d["data"]["message"]=="YEAH!"){
-          List<int> v=[];
           var a = d["data"]["data"].split('+');
           for(var i=0; i<(a.length-1);i++){
-            v.add(int.parse(a[i]));
+            setState(() {
+              alldata[int.parse(a[i])]["cleared"]=true;
+            });
           }
-          setState(() {
-            ans = v;
-            print(ans);
-          });
         }
       }
       print("MyPOINT: $myPoint");
       print("EnemyyPOINT: $enemyPoint");
     }
-    if(enemyPoint >2){
-      Navigator.of(context).push(
+    if(enemyPoint>2){
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
             return Result(win:false);
@@ -225,7 +222,7 @@ class _JoinState extends State<Join> {
       );
     }
     if(myPoint>2){
-      Navigator.of(context).push(
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) {
             return Result(win:true);
@@ -323,29 +320,24 @@ class _JoinState extends State<Join> {
     );
   }
 
-  Widget backbtn(Size size) {
-    return Center(
-      child: FlatButton(
-        color: Colors.limeAccent[700],
-        child: Container(
-          width: size.width*0.8,
-          padding: EdgeInsets.all(10),
-          child: Center(
-            child: Text(
-              "戻る",
-              style: TextStyle(
-                fontFamily: '',
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
-            ),
+  Widget backbtn() {
+    return Material(
+      color: Colors.brown[300],
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: (){
+          Navigator.of(context).popUntil(ModalRoute.withName('/'));
+        },
+        splashColor: Colors.brown[600],
+        borderRadius: BorderRadius.circular(10),
+        child: Text(
+          " 戻る ",
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: "RockSalt",
+            fontSize: 25,
           ),
         ),
-        onPressed: (){
-          deleteRoom().then(
-            (_) => Navigator.popUntil(context, ModalRoute.withName('/'))
-          );
-        },
       ),
     );
   }
@@ -360,6 +352,7 @@ class _JoinState extends State<Join> {
               child: Text(
                 'マッチング中…',
                 style: TextStyle(
+                  fontFamily: "RockSalt",
                   color: Colors.black,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -370,7 +363,7 @@ class _JoinState extends State<Join> {
           Padding(padding: EdgeInsets.all(10),),
           Center( child: const CircularProgressIndicator() ),
           Padding(padding: EdgeInsets.all(10),),
-          backbtn(size)
+          backbtn()
         ],
       )
     );
@@ -462,7 +455,7 @@ class _JoinState extends State<Join> {
   }
 
   void check() {
-    for(var i=0;i<alldata.length;i++){
+    for(var i = 0; i < alldata.length; i++){
       if(alldata[i]["isTapped"]){
         if(b==null){
           setState(() {
@@ -471,7 +464,7 @@ class _JoinState extends State<Join> {
         }else{
           print(b);
           print(alldata[i]);
-          if(b["user_id"]==alldata[i]["user_id"]&&b["image"]==alldata[i]["image"]){
+          if((b["user_id"]==alldata[i]["user_id"])&&(b["image"]==alldata[i]["image"])){
             print('あってる');
             post(true);
             setState(() {
@@ -483,16 +476,20 @@ class _JoinState extends State<Join> {
           }
           postAns();
           print(ans);
-          setState(() {
-            for(var jj=0; jj < alldata.length; jj++){
-              for(var kk=0; kk < ans.length; kk++){
-                if(alldata[jj]["id"]==ans[kk]){
+          for(var jj=0; jj < alldata.length; jj++){
+            for(var kk=0; kk < ans.length; kk++){
+              if(alldata[jj]["id"]==ans[kk]){
+                setState(() {
                   alldata[jj]["isTapped"]=true;
-                }else{
+                });
+              }else{
+                setState(() {
                   alldata[jj]["isTapped"]=false;
-                }
+                });
               }
             }
+          }
+          setState(() {
             b=null;
           });
           return;

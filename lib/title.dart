@@ -226,12 +226,12 @@ class _TitleState extends State<TitlePage> {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: (){
-      //     getImage();
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          getImage();
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

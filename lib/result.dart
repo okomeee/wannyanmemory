@@ -24,7 +24,7 @@ class ResultState extends State<Result> {
             children: <Widget>[
               win?
                 Text(
-                  'YOU \nWIN...',
+                  'YOU \nWIN!',
                   style: TextStyle(
                     fontStyle: FontStyle.italic,
                     fontSize: 100,
@@ -42,7 +42,7 @@ class ResultState extends State<Result> {
                 ),
               
               Image.asset(
-                'images/wanko2.jpg',
+                'wanko2.jpg',
                 fit: BoxFit.cover,
                 width: size.width,
               ),
