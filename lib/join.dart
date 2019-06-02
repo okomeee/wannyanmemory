@@ -71,7 +71,7 @@ class _JoinState extends State<Join> {
         {
           "id": i,
           "user_id": widget.userID,
-          "image":'spa${i+1}.jpg',
+          "image":'sample0000${i+1}.jpg',
           "isTapped": false,
           "cleared": false
         }
@@ -82,7 +82,7 @@ class _JoinState extends State<Join> {
         {
           "id": i,
           "user_id": widget.userID,
-          "image":'spa${i+1-5}.jpg',
+          "image":'sample0000${i+1-5}.jpg',
           "isTapped": false,
           "cleared": false
         }
@@ -93,7 +93,7 @@ class _JoinState extends State<Join> {
         {
           "id": i,
           "user_id": enemyUserID==null?0:enemyUserID,
-          "image":'spa${i+1-10}.jpg',
+          "image":'sample0000${i+1-5}.jpg',
           "isTapped": false,
           "cleared": false
         }
@@ -104,9 +104,8 @@ class _JoinState extends State<Join> {
         {
           "id": i,
           "user_id": enemyUserID==null?0:enemyUserID,
-          "image":'spa${i+1-15}.jpg',
+          "image":'sample0000${i+1-10}.jpg',
           "isTapped": false,
-          "cleared": false
         }
       );
     }
@@ -402,26 +401,12 @@ class _JoinState extends State<Join> {
     );
   }
 
-  Widget gamewait() {
-    return GridView.extent(
-      maxCrossAxisExtent: 120.0,
-      mainAxisSpacing: 5.0,
-      crossAxisSpacing: 5.0,
-      children: alldata.length>0?wList():[],
-    );
-  }
-
   Widget main(size) {
     if(gameFlag){
       if(_start < 1){
         // Game画面
-        if(ternFlag){
-          print("GAME!");
-          return game();
-        }else{
-          print("WAIT!");
-          return gamewait();
-        }
+        print("GAME!");
+        return game();
       } else {
         // カウントダウン画面
         return countdown();
